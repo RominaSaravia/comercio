@@ -10,3 +10,10 @@ Administracion y facturacion de un comercio
 * FACTURACION
   * Carrito
   * Generacion de Ticket
+
+
+### Diagrama base de datos
+![alt text](https://github.com/RominaSaravia/comercio/blob/master/diagrmaDB.jpg)
+
+### Diagrama clases
+![alt text](https://github.com/RominaSaravia/comercio/blob/master/clases.jpg)
