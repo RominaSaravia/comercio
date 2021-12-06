@@ -404,7 +404,6 @@ def menu_session(user):
 
   elif accionElegida == 2:
     flag = False
-    ##Elimino espacios entre caracteres
 
     newMail=input("Ingrese nuevo mail\n")
     while flag == False:
@@ -420,17 +419,20 @@ def menu_session(user):
 
   if accionElegida == 3:
     flag = False
-
-    newPass=input("Ingrese clave\nQue contenga una minuscula,una mayuscula y un caracter especial @ # $ %:\n")
-    confirmPass=input("Ingrese nuevamnete la clave\n")
+    
+    newPass = stdiomask.getpass(prompt="Ingrese contraseña, debe contenener 1 mayuscula, 1 minuscula y 1 caracter especial\n",mask="*")
+    confirmPass = stdiomask.getpass(prompt="Ingrese contraseña\n",mask="*")
 
     while flag == False:
       result = val.validar_clave(newPass, confirmPass)
-      if result:
+      if result == None:
+        flag = True
         user.set_clave(newPass)
         inicializador()
       else:
-        print(result.values())
+        print(result)
+        newPass = stdiomask.getpass(prompt="Ingrese contraseña, debe contenener 1 mayuscula, 1 minuscula y 1 caracter especial\n",mask="*")
+        confirmPass = stdiomask.getpass(prompt="Ingrese contraseña\n",mask="*")
 
 
 

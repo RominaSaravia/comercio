@@ -55,11 +55,11 @@ class Usuario():
 
   def set_clave(self,newClave):
     clave = self.__encriptClave(newClave)
-    sql='UPDATE usuarios SET nombre = %s WHERE id_usuario = %s'
+    sql='UPDATE usuarios SET clave = %s WHERE id_usuario = %s'
     val = (clave,self.get_id())
     dba.get_cursor().execute(sql,val)
     dba.get_conexion().commit()
-    self.set_clave(newClave)
+    self.setPass(newClave)
 
   ########\\CREATE & DELETE en la DBA//#########
   
