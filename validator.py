@@ -18,10 +18,6 @@ class Validator():
       except ValueError:
         return False
 
-    ##Elimino espacios entre caracteres
-    # for x,y in dicc.items():
-    #   datosFinales[x] = y.strip()
-
     for x,y in dicc.items():
       datosFinales[x] = y
 
@@ -103,27 +99,25 @@ class Validator():
     result=dba.get_cursor().fetchone()
     print('Buscando en la base')
 
-    clave = result[3]
-    a = result[3].decode('utf-8')
-    aDecode = base64.b64decode(a)
 
     if result is None:
       errores['mail']="el Mail ingresado no existe en la base"
       return errores
+
+    clave = result[3]
+    a = result[3].decode('utf-8')
+    aDecode = base64.b64decode(a)
     
-    #if (aDecode.decode('utf-8')) == datosFinales['clave']:
-      #print('clave confirmada')
-      #return
-    #else:
-      #errores["clave"]="la clave es incorrecta"
+    if (aDecode.decode('utf-8')) == datosFinales['clave']:
+      print('clave confirmada')
+      return
+    else:
+      errores["clave"]="la clave es incorrecta"
+      return errores
 
   def validar_detalle_factura(self,dicc):
     datosFinales=dicc
     errores={}
-
-    ##Elimino espacios entre caracteres
-    # for x,y in dicc.items():
-    #   datosFinales[x] = y.strip()
 
     if  datosFinales["id_producto"] == None:
       errores["id_producto"] = "Campo vacio"
@@ -177,10 +171,6 @@ class Validator():
     print('Validando datos')
     datosFinales=dicc
     errores={}
-
-    ##Elimino espacios entre caracteres
-    # for x,y in dicc.items():
-    #   datosFinales[x] = y.strip()
 
 
     if datosFinales["fecha"] =='':

@@ -121,6 +121,7 @@ def generar_carrito():
     respuesta = input('Quiere agregar otro producto S/N ???').upper()
     if respuesta == 'S':
       try:
+        print(vista_productos())
         detalle = {}
         detalle['id_producto']=int(input('Ingrese ID producto'))
         detalle['cantidad'] = float(input('Ingrese cantidad'))
@@ -141,7 +142,7 @@ def generar_carrito():
 
 def login():
   flag=False
-  while not flag == True:
+  while flag == False:
     datos = {}
     datos["nombre"]=input("Ingrese usuario\n")
     datos["mail"]=input("Ingrese mail\n")
@@ -207,10 +208,10 @@ def menu_controlStock(user):
     if accionElegida.isdigit() == False:
       print('Debe escribir un numero')
       accionElegida = input("Vuelva a escribir el numero de accion\n")
-    elif accionElegida >= len(menu):
+    elif int(accionElegida) >= len(menu):
       print('No corresponde a una accion')
       accionElegida = input("Vuelva a escribir el numero de accion\n")
-    elif accionElegida <= 0:
+    elif int(accionElegida) <= 0:
       print('No corresponde a una accion')
       accionElegida = input("Vuelva a escribir el numero de accion\n")
     else:
@@ -464,8 +465,9 @@ def inicializador():
       
   elif opcionElegida ==2:
     user = login()
-    print("---  Bienvenido/a ",user.get_nombre(),"  ---")
-    menu_principal(user)
+    if user != None:
+      print("---  Bienvenido/a ",user.get_nombre(),"  ---")
+      menu_principal(user)
   else:
     inicializador()
 
@@ -478,7 +480,6 @@ def registro_usuario():
       datos["mail"]=input("Ingrese el mail\n")
       datos["clave"]=stdiomask.getpass(prompt="Ingrese clave\nQue contenga una minuscula,una mayuscula y un caracter especial @ # $ %:\n",mask='*')
       datos["confirmPass"]=stdiomask.getpass(prompt="Confime la clave:\n",mask='*')
-      print(datos)
       errores = val.validar_usuario(datos)
       if not errores:
         datos.pop('confirmPass')
