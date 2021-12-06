@@ -13,7 +13,7 @@ Administracion y facturacion de un comercio
 
 
 ### Diagrama base de datos
-![alt text](https://github.com/RominaSaravia/comercio/blob/master/diagrmaDB.jpg)
+![alt text](https://github.com/RominaSaravia/comercio/blob/main/diagramaDB.png)
 
 ### Diagrama clases
-![alt text](https://github.com/RominaSaravia/comercio/blob/master/clases.jpg)
+![alt text](https://github.com/RominaSaravia/comercio/blob/main/clases.png)
