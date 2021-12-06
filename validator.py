@@ -111,11 +111,11 @@ class Validator():
       errores['mail']="el Mail ingresado no existe en la base"
       return errores
     
-    if (aDecode.decode('utf-8')) == datosFinales['clave']:
-      print('clave confirmada')
-      return
-    else:
-      errores["clave"]="la clave es incorrecta"
+    #if (aDecode.decode('utf-8')) == datosFinales['clave']:
+      #print('clave confirmada')
+      #return
+    #else:
+      #errores["clave"]="la clave es incorrecta"
 
   def validar_detalle_factura(self,dicc):
     datosFinales=dicc
