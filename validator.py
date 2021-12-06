@@ -150,6 +150,7 @@ class Validator():
 
   def validar_clave(self,clave,confirmPass):
     errores={}
+    caracteresEsp=["$","@","#","%"]
 
     if len(clave) < 6:
       errores["clave"] = "La clave debe contener mas de 6 caracteres"
