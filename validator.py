@@ -167,7 +167,7 @@ class Validator():
     elif clave != confirmPass:
       errores['clave'] = 'No coincide clave y confirmacion de clave'
 
-    if error == {}:
+    if errores == {}:
       return
     else:
       return errores
