@@ -103,18 +103,19 @@ class Validator():
     result=dba.get_cursor().fetchone()
     print('Buscando en la base')
 
-    if result is None:
-      errores['mail']="el Mail ingresado no existe en la base"
-      return errores
-
     clave = result[3]
     a = result[3].decode('utf-8')
     aDecode = base64.b64decode(a)
 
+    if result is None:
+      errores['mail']="el Mail ingresado no existe en la base"
+      return errores
+    
     if (aDecode.decode('utf-8')) == datosFinales['clave']:
+      print('clave confirmada')
       return
     else:
-      errores["clave"]="las clave es incorrecta"
+      errores["clave"]="la clave es incorrecta"
 
   def validar_detalle_factura(self,dicc):
     datosFinales=dicc
@@ -146,6 +147,29 @@ class Validator():
         return errores
 
     return errores
+
+  def validar_clave(self,clave,confirmPass):
+    errores={}
+
+    if len(clave) < 6:
+      errores["clave"] = "La clave debe contener mas de 6 caracteres"
+    elif clave=='':
+      errores["clave"] = "Campo vacio"
+    elif not any(i.isupper() for i in clave):
+      errores['clave'] = 'Debe contener almenos una mayuscula'
+    elif not any(i.islower() for i in clave):
+      errores['clave'] = 'Debe contener almenos una minuscula'
+    elif not any(i.isdigit() for i in clave):
+      errores['clave'] = 'Debe contener almenos un numero'
+    elif not any(i in caracteresEsp for i in clave):
+      errores['clave'] = 'Debe contener almenos un caracter especial'
+    elif clave != confirmPass:
+      errores['clave'] = 'No coincide clave y confirmacion de clave'
+
+    if error == {}:
+      return
+    else:
+      return errores
 
 
   def validar_factura(self,dicc):
@@ -180,7 +204,6 @@ class Validator():
         return errores
 
     return errores
-
 
 
 val=Validator()

@@ -1,5 +1,4 @@
 from comercio import local,controlStock 
-from empleado import empleado 
 from factura import Factura,FacturaDetalle
 from producto import producto
 from db import dba
@@ -9,8 +8,6 @@ from getpass import getpass
 import stdiomask
 from usuario import Usuario
 import datetime
-
-
 
 #----------------   CONTROL STOCK   ------------------
 def select_controlStock(my_id):

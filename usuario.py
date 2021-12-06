@@ -26,6 +26,20 @@ class Usuario():
   def __desencriptClave(self,clave):
     return base64.b64encode(clave).decode('utf-8')
 
+  def set_id_fromDB(self):
+    sql='SELECT id_usuario from usuarios WHERE mail = %s'
+    val = (self.get_mail(),)
+    dba.get_cursor().execute(sql,val)
+    result = dba.get_cursor().fetchone()
+    self.set_id(result[0])
+
+
+  
+  def set_id(self,newId):
+    self.__id=newId
+
+  def setPass(self,newPass):
+    self.__clave = self.__encriptClave(newPass)
 
   def set_mail(self,newMail):
     sql='UPDATE usuarios SET mail = %s WHERE id_usuario = %s'
@@ -45,6 +59,7 @@ class Usuario():
     val = (clave,self.get_id())
     dba.get_cursor().execute(sql,val)
     dba.get_conexion().commit()
+    self.set_clave(newClave)
 
   ########\\CREATE & DELETE en la DBA//#########
   

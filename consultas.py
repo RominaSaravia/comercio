@@ -1,6 +1,5 @@
 from db import dba
 from comercio import local,controlStock 
-from empleado import empleado 
 from factura import Factura 
 from producto import producto
 

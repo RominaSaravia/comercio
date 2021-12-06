@@ -13,7 +13,8 @@ menuInicio=[
   ]
 menuUsuario=[
   {"id":1,"descripcion":"controlStock","acciones":["vista Productos","seleccionar un producto","Ingresar Nuevo Producto"]},
-  {"id":2,"descripcion":"facturacion","acciones":["vista facturacion","Ver detalle factura","generar factura"]}
+  {"id":2,"descripcion":"facturacion","acciones":["vista facturacion","Ver detalle factura","generar factura"],},
+  {"id":3,"descripcion":"Session","acciones":["modificar nombre","modificar mail","cambiar clave"]}
   ]
 menuLocal=[
   {"id":1,"nombre":"local_Urquiza"},
@@ -141,60 +142,86 @@ def generar_carrito():
 def login():
   flag=False
   while not flag == True:
-    try:
-      datos = {}
-      datos["nombre"]=input("Ingrese usuario\n")
-      datos["mail"]=input("Ingrese mail\n")
-      datos["clave"]=stdiomask.getpass(prompt="Ingrese contraseña\n",mask="*")
-      errores = val.validar_login(datos)
-    except:
-      print('Ocurrio un error')
-    else:
-      if not errores:
-        user = Usuario(**datos)
-        print('Se logeo correctamente')
-        flag = True
-        return user
-      print(errores)
+    datos = {}
+    datos["nombre"]=input("Ingrese usuario\n")
+    datos["mail"]=input("Ingrese mail\n")
+    datos["clave"]=stdiomask.getpass(prompt="Ingrese contraseña\n",mask="*")
+    errores = val.validar_login(datos)
+
+    if not errores:
+      user = Usuario(**datos)
+      user.set_id_fromDB()     
+      print('Se logeo correctamente')
+      flag = True
+      return user
+
+    print(errores)
 
 def seleccion_local():
   print('Elija un local')
   local_elegido = {}
+  flag = False
+  ## --  PRINT Locales  --
+  for opcion in menuLocal:
+    print(opcion['id'], opcion['nombre'])
 
-  localFlag = False
+  opcionElegida = input("Escriba un numero\n")
   ## ----    SELECCION LOCAL   -------
-  while localFlag == False:
-    for opcion in menuLocal:
-      print(opcion['id'], opcion['nombre'])
-    try:
-      opcionElegida = int(input("Escriba un numero\n"))
-    except:
-      print('ingrese un numero')
-      opcionElegida = int(input("Escriba un numero\n"))
+  while flag == False:
+    if opcionElegida.isdigit() == False:
+      print('Debe ingresar solo numeros')
+      opcionElegida = input("Vuelva a escriba un numero\n")
+    elif int(opcionElegida) > len(menuLocal):
+      print('El numero no corresponde a un local')
+      opcionElegida = input("Vuelva a escriba un numero\n")
+    elif int(opcionElegida) <= 0:
+      print('NO se pueden ingresar -0- o numeros negativos\n')
+      opcionElegida = input("Vuelva a escriba un numero\n")
     else:
-      for local in menuLocal:
-        if opcionElegida == local['id']:
-          local_elegido["nombre"] = local['nombre']
-          local_elegido['id'] = local['id']
-          localFlag = True
-          return local_elegido
-        else:
-          pass
+      opcionElegida = int(opcionElegida)
+      flag=True
+
+  for local in menuLocal:
+    if opcionElegida == local['id']:
+      local_elegido["nombre"] = local['nombre']
+      local_elegido['id'] = local['id']
+      localFlag = True
+      return local_elegido
+    else:
+      pass
 
 ###########------   MENUs  -----############
 
-def menu_controlStock():
+def menu_controlStock(user):
+  user=user
   print("---- CONTROL STOCK -----")
   #-------- Despliegue menu acciones -------------
-  for accion in menuUsuario[0]['acciones']:
-    print(menuUsuario[0]['acciones'].index(accion) + 1, accion)
+  menu = menuUsuario[0]['acciones']
+  for accion in menu:
+    print(menu.index(accion) + 1, accion)
 
-  accionElegida = int(input("Escriba el numero de accion\n"))
+  flag = False
+  accionElegida = input("Escriba el numero de accion\n")
+
+  while flag == False:
+    if accionElegida.isdigit() == False:
+      print('Debe escribir un numero')
+      accionElegida = input("Vuelva a escribir el numero de accion\n")
+    elif accionElegida >= len(menu):
+      print('No corresponde a una accion')
+      accionElegida = input("Vuelva a escribir el numero de accion\n")
+    elif accionElegida <= 0:
+      print('No corresponde a una accion')
+      accionElegida = input("Vuelva a escribir el numero de accion\n")
+    else:
+      flag = True
+      accionElegida = int(accionElegida)
+  
 
   #--------------  Vista lista Productos  -------------
   if accionElegida == 1:
     print(vista_productos())
-    menu_principal()
+    menu_principal(user)
 
   #-------------- Vista segun ID Producto --------------
   elif accionElegida == 2:
@@ -212,16 +239,18 @@ def menu_controlStock():
         print(art.get_details())
         flag=True
 
-    menu_principal()
+    menu_principal(user)
     #--------------  Registro Producto  ---------------
   
   #-------------- Registro de Producto --------------
   elif accionElegida == 3:
     registro_producto()
-    menu_principal()
+    menu_principal(user)
 
-def menu_facturacion(local):
+def menu_facturacion(local,user):
+  print("---- FACTURACION -----")
   local = local
+  user=user
   ### SELECCION ACCION
   print(' - acciones - ')
   menu_facturacion = menuUsuario[1]
@@ -229,22 +258,42 @@ def menu_facturacion(local):
   for i in acciones:
     print(acciones.index(i)+1,i)
 
-  accionElegida = int(input("Escriba el numero de accion\n"))
+  accionElegida = input("Escriba el numero de accion\n")
+  flag = False
+  while flag == False:
+    if accionElegida.isdigit() == False:
+      print('Debe ingresar un numero')
+      accionElegida = input("Vuelva a escribir un numero de accion\n")
+    if int(accionElegida) > len(acciones):
+      print('No corresponde a una accion')
+      accionElegida = input("Vuelva a escribir un numero de accion\n")
+    if int(accionElegida) < 0:
+      print('No corresponde a una accion')
+      accionElegida = input("Vuelva a escribir un numero de accion\n")
+    else:
+      flag = True
+      accionElegida = int(accionElegida)
+      
+
 
   ## ------- Vista de toda la facturacion ----
   if accionElegida == 1:
     vista_facturas(local["nombre"])
-    menu_principal()
+    menu_principal(user)
 
   ## --------- Vista factura detalle --------
   elif accionElegida == 2:
     my_id = input('Introduzca el ID de la factura:\n')
-    vista_factura_detalle(my_id)
-    menu_principal()
+    result = vista_factura_detalle(my_id)
+    if result == {} or result == None:
+      print('No se encontro la factura')
+    else:
+      print('Producto: ',result['Producto'],'Cantidad: ',result['Cantidad'],'Monto: ',result['Monto'])
+    menu_principal(user)
 
   ## ------ Generar lista de productos de un ticket --------
   elif accionElegida == 3:
-    print('######## Ticket ##########')
+    print('\n######## Ticket ##########')
     lista_detalles = []
 
     carrito = generar_carrito()
@@ -255,7 +304,7 @@ def menu_facturacion(local):
       finalizar = input('Finalizar compra S/N')
       if finalizar.upper() == 'S':
         factura = registro_ticket(local["id"])
-        print('Ticket ID: ',factura.get_id(),'\nMedio de pago: ',factura.get_medioP())
+        print('\nTicket ID: ',factura.get_id(),'\nMedio de pago: ',factura.get_medioP(),'\n')
         if factura:
           for producto in carrito:
             producto['id_factura']=factura.get_id()
@@ -263,7 +312,7 @@ def menu_facturacion(local):
             vista_detalle_producto( factura.get_id(), newProducto.get_id_producto() )
 
           print(vista_factura_final(factura.get_id()))
-          menu_principal()
+          menu_principal(user)
         else:
           print('Error - Menu_facturacion - Generar factura - Hubo un error en la generacion de factura')
 
@@ -272,35 +321,156 @@ def menu_facturacion(local):
 
 
   else:
-    menu_principal()
+    menu_principal(user)
 
-def menu_principal():
+def menu_principal(user):
+  user = user
   ### Seleccion local
   local = seleccion_local()
+  flag = False
   if local:
     print(local)
     print('Elige una opcion escribiendo su numero\n')
     for opcion in menuUsuario:
       print(opcion['id'], opcion['descripcion'])
-    opcionElegida = int(input("Escriba un numero\n"))
 
+    opcionElegida = input("Escriba un numero\n")
+    while flag == False:
+      if opcionElegida.isdigit() == False:
+        print('Debe ser un numero')
+        opcionElegida = input("Vuelva a intentarlo, escriba un numero\n")
+      elif int(opcionElegida) > len(menuUsuario) :
+        print('No corresponde a una opcion')
+        opcionElegida = input("Vuelva a intentarlo, escriba un numero\n")
+      elif int(opcionElegida) < 0:
+        print('No corresponde a una opcion')
+        opcionElegida = input("Vuelva a intentarlo, escriba un numero\n")
+      else:
+        opcionElegida = int(opcionElegida)
+        flag=True
 
+    
     if opcionElegida == 1:
-      menu_controlStock()
+      menu_controlStock(user)
 
     elif opcionElegida == 2:
-      print("---- FACTURACION -----")
-      menu_facturacion(local)
+      menu_facturacion(local,user)
+
+    elif opcionElegida == 3:
+      menu_session(user)
+
+def menu_session(user):
+  print('------ SESSION ------')
+  user = user
+  # ["modificar nombre","modificar mail","cambiar clave"]
+  ### SELECCION ACCION
+  print(' - acciones - \n')
+  menu_facturacion = menuUsuario[2]
+  acciones = menu_facturacion['acciones']
+  for i in acciones:
+    print(acciones.index(i)+1,i)
+
+  accionElegida = input("Escriba el numero de accion\n")
+  flag = False
+  while flag == False:
+    if accionElegida.isdigit() == False:
+      print('Debe ingresar un numero')
+      accionElegida = input("Vuelva a escribir un numero de accion\n")
+    if int(accionElegida) > len(acciones):
+      print('No corresponde a una accion')
+      accionElegida = input("Vuelva a escribir un numero de accion\n")
+    if int(accionElegida) < 0:
+      print('No corresponde a una accion')
+      accionElegida = input("Vuelva a escribir un numero de accion\n")
+    else:
+      flag = True
+      accionElegida = int(accionElegida)
+  
+  if accionElegida == 1:
+    flag = False
+
+    newName=input("Ingrese nuevo nombre\n")
+    while flag == False:
+      newName = newName.strip()
+      if newName == "":
+        print('Campo vacio')
+        newName=input("Ingrese nuevo nombre\n")
+      else:
+        flag = True
+        print('nombre ingresado: ',newName)
+        user.set_nombre(newName)
+        inicializador()
+
+  elif accionElegida == 2:
+    flag = False
+    ##Elimino espacios entre caracteres
+
+    newMail=input("Ingrese nuevo mail\n")
+    while flag == False:
+      newMail = newMail.strip()
+      if newMail == "":
+        print('Campo vacio')
+        newMail=input("Ingrese nuevo mail\n")
+      else:
+        flag = True
+        print('mail ingresado: ',newMail)
+        user.set_mail(newMail)
+        inicializador()
+
+  if accionElegida == 3:
+    flag = False
+
+    newPass=input("Ingrese clave\nQue contenga una minuscula,una mayuscula y un caracter especial @ # $ %:\n")
+    confirmPass=input("Ingrese nuevamnete la clave\n")
+
+    while flag == False:
+      result = val.validar_clave(newPass, confirmPass)
+      if result:
+        user.set_clave(newPass)
+        inicializador()
+      else:
+        print(result.values())
+
+
+
+
 
 def inicializador():
   print("----- INICIO SESSION -----\n")
   for opcion in menuInicio:
     print(opcion['id'], opcion['descripcion'])
 
-  opcionElegida = int(input("Escriba un numero\n"))
+  flag1 = False
+  opcionElegida = input("Escriba un numero\n")
+  while flag1 == False:
+    if opcionElegida.isdigit() == False:
+      print('Debe ingresar un numero')
+      opcionElegida = input("Vuelva a intentarlo un numero\n")
+    elif int(opcionElegida) > len(menuInicio):
+      print('No corresponde a una opcion')
+      opcionElegida = input("Vuelva a intentarlo un numero\n")
+    elif int(opcionElegida) < 0:
+      print('No corresponde a una opcion')
+      opcionElegida = input("Vuelva a intentarlo un numero\n")
+    else:
+      flag1 = True
+      opcionElegida = int(opcionElegida)
+      
 
   if opcionElegida == 1:
-    #----------------   VALIDAR USUARIO   --------------------
+    user = registro_usuario()
+    if user != None:
+      inicializador()
+      
+  elif opcionElegida ==2:
+    user = login()
+    print("---  Bienvenido/a ",user.get_nombre(),"  ---")
+    menu_principal(user)
+  else:
+    inicializador()
+
+
+def registro_usuario():
     flag =False
     while not flag == True:
       datos = {}
@@ -316,20 +486,10 @@ def inicializador():
         user.save()
         print('Se añadió un nuevo user a la DB')
         flag=True
+        return user
       else:
         for error in errores.values():
           print(error)
-
-    inicializador()
-
-      
-  elif opcionElegida ==2:
-    user = login()
-    print("---  Bienvenido/a ",user.get_nombre(),"  ---")
-    menu_principal()
-  else:
-    inicializador()
-  
   
 inicializador()
 

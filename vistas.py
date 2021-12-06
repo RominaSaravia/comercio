@@ -58,6 +58,7 @@ def vista_factura_final(my_id):
 ### Visualizar factura detalle - Todos los productos
 #### Se le aplica un filtro Id_factura
 def vista_factura_detalle(id_factura):
+  result={}
   print('######### Vista factura detalle id: ',id_factura,'   #########')
   sql='''
   SELECT id_detalle,CONCAT(productos.nombre,space(1),productos.marca) as producto, cantidad,ROUND(productos.PrecioVenta*cantidad , 2) AS 'Monto', categoria.nombre as categoria 
@@ -70,7 +71,8 @@ def vista_factura_detalle(id_factura):
   dba.get_cursor().execute(sql,val)
   
   for i in dba.get_cursor().fetchall():
-    print('Producto:',i[1],'Cantidad: ',i[2],'Categria:',i[4],'Monto: ',i[3])
+    result={'Producto':i[1],'Cantidad':i[2],'Categria':i[4],'Monto':i[3]}
+    return result
 
 ### Visualizar factura detalle - Retorna vista de un producto
 #### Se le aplica un filtro Id_factura
